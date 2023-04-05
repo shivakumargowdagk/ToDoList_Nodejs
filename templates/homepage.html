@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light justify-content-between">
+        <a class="navbar-brand">
+            <h4 style="color:darkblue;">TO DO LIST</h4>
+        </a>
+        <form class="form-inline">
+            <a href="homepage.html"><button type="button" class="btn btn-success"
+                    style="margin-right: 20px">Home</button></a>&nbsp;
+            <a href="addnewtask.html"><button type="button" class="btn btn-success" style="margin-right: 20px">Add
+                    New</button></a>
+        </form>
+    </nav>
+
+    <div style="background: rgba(0, 0, 0, 0.1);padding: 30px;">
+    <div class="container">
+        <div id="accordion">
+            <div id="dropdownlist">
+
+            </div>
+        </div>
+    </div>
+    </div>
+    
+
+    <div style="font-size: 18px; text-align: center;background: rgba(0, 0, 0, 0.2);padding: 18px;">
+        copyright &copy; 2022, by to do list
+    </div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.js"></script>
+    <script>
+        function viewLists() {
+            const tablerow = [];
+            $.ajax({
+                url: 'http://localhost:4000/viewLists',
+                type: "GET",
+                success: function (data) {
+                    data.forEach(function (element) {
+                        // tablerow.push("<tr><td>" + element.listName + "</td><td>" + element.listContent + "</td><td><button onclick='viewSingleTask(" + JSON.stringify(element._id) + ")' class='btn btn-warning' '>Update</button></td><td><a onclick='deletelist(" + JSON.stringify(element._id) + ")'><button class='btn btn-danger'>Delete</button></td></tr>")
+                        // tablerow.push("<div class='card'><div class= 'card-header' id='" + element.listName + "' ><h5 class='mb-0'><button class='btn btn-link' data-toggle='collapse' data-target='#"+element._id+"' aria-expanded='true' aria-controls='"+element._id+"'>" + element.listName + "</button></h5></div><div id='"+element._id+"' class='collapse' aria-labelledby='"+element.listName+"' data-parent='#accordion'><div class='card-body'>" + element.listContent + "</br></br><button onclick='viewSingleTask(" + JSON.stringify(element._id) + ")' class='btn btn-warning' '>Update</button></br></br><a onclick='deletelist(" + JSON.stringify(element._id) + ")'><button class='btn btn-danger'>Delete</button></div></div></div>")
+                        tablerow.push("<div class='card'><div class= 'card-header' id='" + element.listName + "' ><h5 class='mb-0'><button class='btn btn-link' data-toggle='collapse' data-target='#"+element._id+"' aria-expanded='true' aria-controls='"+element._id+"'>" + element.listName + "</button></h5></div><div id='"+element._id+"' class='collapse' aria-labelledby='"+element.listName+"' data-parent='#accordion'><div class='card-body'>" + element.listContent + "</br></br><button href='updatetask.html' onclick='viewSingleTask(" + JSON.stringify(element._id) + ")' class='btn btn-warning' '>Update</button></br></br><a onclick='deletelist(" + JSON.stringify(element._id) + ")'><button class='btn btn-danger'>Delete</button></div></div></div>")
+                    });
+                    console.log(tablerow)
+                    document.getElementById("dropdownlist").innerHTML = tablerow
+                },
+                error: function (error) {
+                    console.log(`Error ${error}`);
+                }
+            });
+        }
+
+        viewLists();
+
+        function viewSingleTask(id) {
+            $.ajax({
+                url: 'http://localhost:4000/viewList/' + id,
+                type: "GET",
+                success: function (data) {
+                    document.getElementById('updatelistname').value  = data.listName
+                    document.getElementById('updatelistcontent').value  = data.listContent
+                    document.getElementById('listid').value  = data._id
+                    window.location.href = 'http://127.0.0.1:5500/templates/updatetask.html';
+                },
+                error: function (error) {
+                    console.log(`Error ${error}`);
+                }
+            });
+        }
+
+        function deletelist(id) {
+            console.log('http://localhost:4000/deleteList/' + id)
+            $.ajax({
+                url: 'http://localhost:4000/deleteList/' + id,
+                type: "PUT",
+                success: function (data) {
+                    console.log("Item is deleted")
+                    alert('list was deleted');
+                    location.reload();
+
+                },
+                error: function (error) {
+                    console.log(`Error ${error}`);
+                }
+            });
+        }
+
+
+        
+
+    </script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>
